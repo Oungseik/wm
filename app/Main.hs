@@ -35,7 +35,6 @@
 -- -- application by implementing copilot extension for testCanvas.
 --
 
-
 --
 -- xmonad example config file.
 --
@@ -46,15 +45,15 @@
 --
 
 import qualified Data.Map as M
-import Data.Monoid
+import Data.Monoid ()
 import System.Exit
 import XMonad
 import qualified XMonad.StackSet as W
 
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
---
-myTerminal = "xterm"
+myTerminal :: String
+myTerminal = "alacritty"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -66,6 +65,7 @@ myClickJustFocuses = False
 
 -- Width of the window border in pixels.
 --
+myBorderWidth :: Dimension
 myBorderWidth = 1
 
 -- modMask lets you specify which modkey you want to use. The default
@@ -73,7 +73,8 @@ myBorderWidth = 1
 -- ("right alt"), which does not conflict with emacs keybindings. The
 -- "windows key" is usually mod4Mask.
 --
-myModMask = mod1Mask
+myModMask :: KeyMask
+myModMask = mod4Mask
 
 -- The default number of workspaces (virtual screens) and their names.
 -- By default we use numeric strings, but any string may be used as a
@@ -84,17 +85,20 @@ myModMask = mod1Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
+myWorkspaces :: [String]
 myWorkspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 -- Border colors for unfocused and focused windows, respectively.
---
+myNormalBorderColor :: String
 myNormalBorderColor = "#dddddd"
 
+myFocusedBorderColor :: String
 myFocusedBorderColor = "#ff0000"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
+myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
   M.fromList $
     -- launch a terminal
@@ -142,7 +146,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
       -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
       -- Quit xmonad
-      ((modm .|. shiftMask, xK_q), io (exitWith ExitSuccess)),
+      ((modm .|. shiftMask, xK_q), io exitSuccess),
       -- Restart xmonad
       ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart"),
       -- Run xmessage with a summary of the default keybindings (useful for beginners)
@@ -170,25 +174,24 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
 --
+myMouseBindings :: XConfig l -> M.Map (KeyMask, Button) (Window -> X ())
 myMouseBindings (XConfig {XMonad.modMask = modm}) =
-  M.fromList $
+  M.fromList
     -- mod-button1, Set the window to floating mode and move by dragging
     [ ( (modm, button1),
-        ( \w ->
-            focus w
-              >> mouseMoveWindow w
-              >> windows W.shiftMaster
-        )
+        \w ->
+          focus w
+            >> mouseMoveWindow w
+            >> windows W.shiftMaster
       ),
       -- mod-button2, Raise the window to the top of the stack
-      ((modm, button2), (\w -> focus w >> windows W.shiftMaster)),
+      ((modm, button2), \w -> focus w >> windows W.shiftMaster),
       -- mod-button3, Set the window to floating mode and resize by dragging
       ( (modm, button3),
-        ( \w ->
-            focus w
-              >> mouseResizeWindow w
-              >> windows W.shiftMaster
-        )
+        \w ->
+          focus w
+            >> mouseResizeWindow w
+            >> windows W.shiftMaster
       )
       -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
@@ -204,6 +207,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) =
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
+myLayout :: Choose Tall (Choose (Mirror Tall) Full) a
 myLayout = tiled ||| Mirror tiled ||| Full
   where
     -- default tiling algorithm partitions the screen into two panes
@@ -259,6 +263,7 @@ myEventHook = mempty
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
+myLogHook :: X ()
 myLogHook = return ()
 
 ------------------------------------------------------------------------
@@ -269,6 +274,7 @@ myLogHook = return ()
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
+myStartupHook :: X ()
 myStartupHook = return ()
 
 ------------------------------------------------------------------------
@@ -276,6 +282,7 @@ myStartupHook = return ()
 
 -- Run xmonad with the settings you specify. No need to modify this.
 --
+main :: IO ()
 main = xmonad defaults
 
 -- A structure containing your configuration settings, overriding
@@ -284,6 +291,7 @@ main = xmonad defaults
 --
 -- No need to modify this.
 --
+defaults :: XConfig (Choose Tall (Choose (Mirror Tall) Full))
 defaults =
   def
     { -- simple stuff
