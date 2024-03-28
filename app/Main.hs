@@ -1,3 +1,5 @@
+import Keybindings (myKeyBind)
+import Layout (myLayout)
 import StatusBar (sbConfig)
 import XMonad
 import XMonad.Hooks.EwmhDesktops
@@ -24,10 +26,7 @@ myConfig =
       manageHook = myManageHook,
       terminal = "alacritty"
     }
-    `additionalKeysP` [ ("M-S-z", spawn "xscreensaver-command -lock"),
-                        ("M-C-s", unGrab *> spawn "scrot -s"),
-                        ("M-f", spawn "firefox")
-                      ]
+    `additionalKeysP` myKeyBind
 
 myManageHook :: ManageHook
 myManageHook =
@@ -35,12 +34,3 @@ myManageHook =
     [ className =? "Gimp" --> doFloat,
       isDialog --> doFloat
     ]
-
-myLayout :: Choose Tall (Choose (Mirror Tall) (Choose Full (ModifiedLayout Magnifier ThreeCol))) a
-myLayout = tiled ||| Mirror tiled ||| Full ||| threeCol
-  where
-    threeCol = magnifiercz' 1.3 $ ThreeColMid nmaster delta ratio
-    tiled = Tall nmaster delta ratio
-    nmaster = 1
-    ratio = 1 / 2
-    delta = 3 / 100

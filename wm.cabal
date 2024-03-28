@@ -26,7 +26,10 @@ source-repository head
 library
   exposed-modules:
       Colors
+      Colors.CatppuccinMocha
       Colors.DoomOne
+      Keybindings
+      Layout
       StatusBar
   other-modules:
       Paths_wm
