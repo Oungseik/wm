@@ -27,6 +27,7 @@ library
   exposed-modules:
       Colors
       Colors.DoomOne
+      StatusBar
   other-modules:
       Paths_wm
   autogen-modules:
